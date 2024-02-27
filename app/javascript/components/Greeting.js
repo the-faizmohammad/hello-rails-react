@@ -1,34 +1,25 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchGreeting } from "../redux/greetings/greetingsSlice";
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { fetchGreeting } from '../redux/greetings/greetingsSlice';
 
-// Define a keyframe animation
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-// Styled components for animations and effects
 const GreetingContainer = styled.div`
-  animation: ${fadeIn} 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
 `;
 
-const LoadingText = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-`;
+const Button = styled.button`
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 
-const ErrorText = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-  color: #ff0000;
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const GreetingText = styled.p`
@@ -37,29 +28,25 @@ const GreetingText = styled.p`
 `;
 
 const ShowGreeting = () => {
-    const { isLoading, error } = useSelector((store) => store.greetings);
-    const greeting = useSelector((store) => store.greetings.greeting);
-    const dispatch = useDispatch();
+  const { isLoading, error, greeting } = useSelector((store) => store.greetings);
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(fetchGreeting());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchGreeting());
+  }, [dispatch]);
 
-    if (isLoading) {
-        return <LoadingText>Loading....</LoadingText>
-    }
+  const handleRefresh = () => {
+    dispatch(fetchGreeting());
+  };
 
-    if (error) {
-        return <ErrorText>Something went wrong!</ErrorText>
-    }
-
-    return (
-        <GreetingContainer>
-            <h1>Random Greeting!</h1>
-            <GreetingText>You can see the <strong>Hello User! How are you?</strong> in 10 different languages!</GreetingText>
-            <GreetingText>Greeting: {greeting}</GreetingText>
-        </GreetingContainer>
-    )
-}
+  return (
+    <GreetingContainer>
+      <h1>Random Greeting!</h1>
+      <GreetingText>You can see the <strong>Hello User! How are you?</strong> in 10 different languages!</GreetingText>
+      <GreetingText>Greeting: {greeting}</GreetingText>
+      <Button onClick={handleRefresh}>Refresh</Button>
+    </GreetingContainer>
+  );
+};
 
 export default ShowGreeting;
